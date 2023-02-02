@@ -1,5 +1,5 @@
 from models.movie import Movie as MovieModel
-from schemas.movie import Movie
+
 
 
 class MovieService():
@@ -11,15 +11,55 @@ class MovieService():
         result = self.db.query(MovieModel).all()
         return result
 
-    def get_movie(self,id:int):
-        result = self.db.query(MovieModel).filter(MovieModel.id == id).first()
-        return result
+    def create_movies(self, movies:MovieModel):
+        new_movie= MovieModel( 
+        id=movies.id ,
+        title= movies.title,
+        overview=movies.overview,
+        year=movies.year,
+        time=movies.time,
+        date_release=movies.date_release,
+        release_contry=movies.release_contry
+        )
+        self.db.add(new_movie)
+        self.db.commit()
+        return  
+         
 
-    def get_movies_by_release_contry(self,release_contry:str):
-        result = self.db.query(MovieModel).filter(MovieModel.release_contry == release_contry).all()
-        return result        
+    def get_movie_by_id(self, id:int):
+        return self.db.query(MovieModel).filter(MovieModel.id == id).first()
 
-    def create_movie(self, movie:Movie):
+
+    def get_movies_by_title(self,title:str):
+        result = self.db.query(MovieModel).filter(MovieModel.title == title).all()
+        return result     
+       
+
+    def delete_movies(self,id:int):
+        movie=self.get_movie_by_id(id)
+        if not movie:
+            return None
+        self.db.delete(movie)
+        self.db.commit()
+        return movie
+
+
+    def update_movie(self,id:int, data:MovieModel):
+        movie = self.db.query(MovieModel).filter(MovieModel.id == id).first()
+        movie.title = data.title
+        movie.overview = data.overview
+        movie.year = data.year
+        movie.time = data.time
+        movie.date_release = data.date_release
+        movie.release_contry = data.release_contry
+        self.db.commit()
+        return data
+
+    """ 
+
+          
+
+    def create_movie_title(self, movie:Movie):
         new_movie = MovieModel(
         title=movie.title,
         overview = movie.overview,
@@ -48,4 +88,4 @@ class MovieService():
         self.db.commit
 
 
-
+ """
